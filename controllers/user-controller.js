@@ -82,22 +82,22 @@ const userController = {
   },
   addFavorite: (req, res, next) => {
     const { restaurantId } = req.params
+    const userId = req.user.id
     return Promise.all([
       Restaurant.findByPk(restaurantId),
       Favorite.findOne({
         where: {
-          userId: req.user.id,
-          restaurantId
+          restaurantId,
+          userId
         }
       })
     ])
       .then(([restaurant, favorite]) => {
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         if (favorite) throw new Error('You have favorited this restaurant!')
-
         return Favorite.create({
-          userId: req.user.id,
-          restaurantId
+          restaurantId,
+          userId
         })
       })
       .then(() => res.redirect('back'))
